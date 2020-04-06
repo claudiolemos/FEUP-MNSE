@@ -3,11 +3,14 @@ let poseNet;
 let pose;
 
 /**
+ * Initial setup of the p5js playground
  * 
+ * - create a 1000x1000 canvas
+ * - get video feed from camera
+ * - loads poseNet model
  */
 function setup() {
-  createCanvas(500, 500);
-  frameRate(30);
+  createCanvas(1000, 1000);
   video = createCapture(VIDEO);
   video.hide();
   poseNet = ml5.poseNet(video, modelLoaded);
@@ -15,7 +18,10 @@ function setup() {
 }
 
 /**
+ * Draws to the canvas every x milliseconds
  * 
+ * - video feed
+ * - red circle on the nose of the first detected body
  */
 function draw() {
   image(video, 0, 0);
@@ -28,8 +34,9 @@ function draw() {
 }
 
 /**
+ *  
  * 
- * @param {*} poses 
+ * @param {Array} poses detected bodies by the poseNet library 
  */
 function gotPoses(poses){
   if(poses)
