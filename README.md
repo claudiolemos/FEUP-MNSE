@@ -4,9 +4,9 @@ HumanSynth is an interactive multimedia application that has the goal of generat
 
 ## Members
 
-Cláudio Fischer Lemos
-Henrique Reis Sendim Rodrigues
-Sandro Miguel Tavares Campos
+* Cláudio Fischer Lemos
+* Henrique Reis Sendim Rodrigues
+* Sandro Miguel Tavares Campos
 
 ## Overview
 
