@@ -1,0 +1,25 @@
+{
+  "name": "humansynth",
+  "version": "0.4.3",
+  "description": "ml5-examples repo",
+  "main": "index.html",
+  "scripts": {
+    "develop": "live-server --port=8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laudiolemos/FEUP-MNSE.git"
+  },
+  "dependencies": {
+    "node-html-parser": "^1.1.14",
+    "recursive-readdir": "^2.2.2"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.3",
+    "dotenv": "^8.2.0",
+    "live-server": "^1.2.1",
+    "q": "^1.5.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
