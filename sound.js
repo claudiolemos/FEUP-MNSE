@@ -9,7 +9,7 @@ let modMinFreq = 0;
 let modMaxDepth = 150;
 let modMinDepth = -150;
 
-function setupSound(canvas) {
+function setupSound() {
   carrier = new p5.Oscillator('sine');
   carrier.amp(0); // set amplitude
   carrier.freq(carrierBaseFreq); // set frequency
