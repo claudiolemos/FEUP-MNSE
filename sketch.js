@@ -11,7 +11,7 @@ let pose;
  * - loads poseNet model
  */
 function setup() {
-  createCanvas(1000, 1000);
+  createCanvas(windowWidth, windowHeight);
 
   video = createCapture(VIDEO);
   video.hide();
@@ -20,7 +20,7 @@ function setup() {
   // setupVisual();
   // setupSegmentation();
 
-  poseNet = ml5.poseNet(video, modelLoaded);
+  poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
   poseNet.on('pose', gotPoses);
 }
 
@@ -32,18 +32,26 @@ function setup() {
  * - red circle on the nose of the first detected body
  */
 function draw() {
-  image(video, 0, 0);
+  drawVideo(video);
 
-  // updateSound();
+  // updateSound(pose, video);
   // updateVisual();
   // updateSegmentation();
+}
 
-  if(pose){
-    beginShape();
-    fill(255,0,0);
-    noStroke();
-    ellipse(pose.nose.x, pose.nose.y, 64);
-    endShape();
+/**
+ * Draws the video to fit the full window
+ * 
+ * @param {*} video 
+ */
+function drawVideo(video){
+  if(video.width*(windowWidth/video.width) >= windowWidth && video.height*(windowWidth/video.width) >= windowHeight){ // LANDSCAPE
+    image(video, (windowWidth-video.width*(windowWidth/video.width))/2, (windowHeight-video.height*(windowWidth/video.width))/2, video.width*(windowWidth/video.width), video.height*(windowWidth/video.width));
+    // return windowWidth/video.width;
+  }
+  else{ // PORTRAIT
+    image(video, (windowWidth-video.width*(windowHeight/video.height))/2, (windowHeight-video.height*(windowHeight/video.height))/2, video.width*(windowHeight/video.height), video.height*(windowHeight/video.height));
+    // return windowHeight/video.height;
   }
 }
 

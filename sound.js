@@ -9,13 +9,17 @@ let modMinFreq = 0;
 let modMaxDepth = 150;
 let modMinDepth = -150;
 
+let carrierFreq;
+let carrierAmp;
+let modulationFreq;
+
 function setupSound() {
   carrier = new p5.Oscillator('sine');
   carrier.amp(0); // set amplitude
   carrier.freq(carrierBaseFreq); // set frequency
   carrier.start(); // start oscillating
 
-  modulator = new p5.Oscillator('sine'); // 'square' or 'triangle'
+  modulator = new p5.Oscillator('sine'); // 'sine', 'square' or 'triangle'
   modulator.start();
 
   modulator.disconnect(); // add the modulator's output to modulate the carrier's frequency
@@ -26,7 +30,13 @@ function setupSound() {
   carrier.amp(1.0, 0.01); // toggle audio on
 }
 
-function updateSound() {
+function updateSound(pose, video) {
+  if(pose){
+    carrierFreq = map(pose.leftWrist.y, 0, video.height, modMinFreq, modMaxFreq);
+    carrierAmp = map(pose.rightWrist.y, 0, video.height, modMinDepth, modMaxDepth);
+    modulationFreq = map(pose.nose.x, 0, video.width, 220, 12000);
+  }
+
   let modFreq = map(mouseY, height, 0, modMinFreq, modMaxFreq);
   modulator.freq(modFreq);
 
