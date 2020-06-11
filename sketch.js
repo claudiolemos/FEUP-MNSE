@@ -11,17 +11,18 @@ let pose;
  * - loads poseNet model
  */
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(320, 240);
 
   video = createCapture(VIDEO);
+  video.size(320,240);
   video.hide();
 
   // setupSound();
-  // setupVisual();
+  setupVisual(video);
   // setupSegmentation();
 
-  poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
-  poseNet.on('pose', gotPoses);
+  //poseNet = ml5.poseNet(video, {detectionType: 'single', outputStride:8, quantBytes:4}, modelLoaded);
+  //poseNet.on('pose', gotPoses);
 }
 
 /**
@@ -32,10 +33,11 @@ function setup() {
  * - red circle on the nose of the first detected body
  */
 function draw() {
-  drawVideo(video);
+  //drawVideo(video);
+  image(video, 0, 0);
 
   // updateSound(pose, video);
-  // updateVisual();
+  updateVisual(video);
   // updateSegmentation();
 }
 
