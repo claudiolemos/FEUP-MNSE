@@ -11,17 +11,17 @@ let pose;
  * - loads poseNet model
  */
 function setup() {
-  createCanvas(320, 240);
+  createCanvas(640, 480);
 
   video = createCapture(VIDEO);
-  video.size(320,240);
+  video.size(640,480);
   video.hide();
 
   // setupSound();
   setupVisual(video);
   // setupSegmentation();
 
-  //poseNet = ml5.poseNet(video, {detectionType: 'single', outputStride:8, quantBytes:4}, modelLoaded);
+  //poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
   //poseNet.on('pose', gotPoses);
 }
 
