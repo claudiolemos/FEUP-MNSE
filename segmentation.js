@@ -1,26 +1,23 @@
 let bodypix;
-
-
-//import * as bodyPix from '@tensorflow-models/body-pix'; 
-/*
-function setup() {
-
-    bodypix = ml5.bodyPix(video, modelReady);
-}
-*/
+let vid;
 
 function setupSegmentation(video) {
+	vid = video;
 	bodypix = ml5.bodyPix(modelReady);
 }
 
-
-function updateSegmentation() {
-	modelReady();
+function updateSegmentation(video) {
+	
 }
 
 function modelReady() {
-  // segment the image given
-  bodypix.segment(video, gotResults);
+	console.log("Model loaded!");
+	updateBody();
+}
+
+function updateBody() {
+	// segment the image given
+	bodypix.segment(vid, gotResults);
 }
 
 function gotResults(error, result) {
@@ -29,7 +26,8 @@ function gotResults(error, result) {
     return;
   }
   // log the result
-  console.log(result.backgroundMask);
+  console.log(result);
+  updateBody();
 }
 
 

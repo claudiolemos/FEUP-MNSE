@@ -20,8 +20,8 @@ function setup() {
   // setupVisual();
   setupSegmentation(video);
 
-  poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
-  poseNet.on('pose', gotPoses);
+  //poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
+  //poseNet.on('pose', gotPoses);
 }
 
 /**
@@ -36,7 +36,7 @@ function draw() {
 
   //updateSound(pose, video);
   // updateVisual();
-  updateSegmentation(video);
+  //updateSegmentation(video);
 }
 
 /**
