@@ -25,7 +25,7 @@ function updateVisual(video) {
     // Draw a bounding box on the person
     drawPersonBB(video);
     // Draw the spectrum color canvas
-    //drawSpectrumCanvas(video);
+    drawSpectrumCanvas(video);
     // Enhance selected color
     drawSelectedColor(video);
 }
@@ -66,14 +66,13 @@ function drawPersonBB(video) {
 function drawSpectrumCanvas(video) {
     // Get spectrum canvas dimensions
     const { width, height } = spectrumCanvas
-    spectrumCanvas.colorMode(HSB, width);
     spectrumCanvas.strokeWeight(2);
     for (x = 0; x <= width; x++) {
         spectrumCanvas.stroke(x, width, video.height);
         spectrumCanvas.line(x, 0, x, height);
         x++;
     }
-    image(spectrumCanvas, 0, video.height - height);
+    image(spectrumCanvas, 0, video.height - 40);
 }
 
 function drawSelectedColor() {
@@ -81,7 +80,7 @@ function drawSelectedColor() {
     colour.setAlpha(200);
     spectrumCanvas.clear();
     spectrumCanvas.fill(colour);
-    spectrumCanvas.rect(0, 0, width, height);
+    spectrumCanvas.rect(0, 0, width, height - 40);
     image(spectrumCanvas, 0, 0);
 }
 
