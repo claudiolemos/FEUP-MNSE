@@ -16,9 +16,9 @@ function setup() {
   video = createCapture(VIDEO);
   video.hide();
 
-  // setupSound();
+  //setupSound();
   // setupVisual();
-  // setupSegmentation();
+  setupSegmentation(video);
 
   poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
   poseNet.on('pose', gotPoses);
@@ -34,9 +34,9 @@ function setup() {
 function draw() {
   drawVideo(video);
 
-  // updateSound(pose, video);
+  //updateSound(pose, video);
   // updateVisual();
-  // updateSegmentation();
+  updateSegmentation(video);
 }
 
 /**
@@ -47,11 +47,11 @@ function draw() {
 function drawVideo(video){
   if(video.width*(windowWidth/video.width) >= windowWidth && video.height*(windowWidth/video.width) >= windowHeight){ // LANDSCAPE
     image(video, (windowWidth-video.width*(windowWidth/video.width))/2, (windowHeight-video.height*(windowWidth/video.width))/2, video.width*(windowWidth/video.width), video.height*(windowWidth/video.width));
-    // return windowWidth/video.width;
+    //return windowWidth/video.width;
   }
   else{ // PORTRAIT
     image(video, (windowWidth-video.width*(windowHeight/video.height))/2, (windowHeight-video.height*(windowHeight/video.height))/2, video.width*(windowHeight/video.height), video.height*(windowHeight/video.height));
-    // return windowHeight/video.height;
+    //return windowHeight/video.height;
   }
 }
 
