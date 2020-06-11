@@ -1,6 +1,8 @@
 let video;
 let poseNet;
 let pose;
+let loadingAnimation;
+let isLoading = true;
 
 /**
  * Initial setup of the p5js playground
@@ -16,6 +18,9 @@ function setup() {
   video = createCapture(VIDEO);
   video.size(640,480);
   video.hide();
+
+  // Loading animation
+  loadingAnimation = select('.bubbles-wrapper');
 
   // setupSound();
   setupVisual(video);
@@ -33,12 +38,21 @@ function setup() {
  * - red circle on the nose of the first detected body
  */
 function draw() {
-  //drawVideo(video);
   image(video, 0, 0);
+  if (!isLoading) {
+    // Draw video
+    // Update modules
+    // updateSound(pose, video);
+    updateVisual(video);
+    // updateSegmentation();
+  }
+}
 
-  // updateSound(pose, video);
-  updateVisual(video);
-  // updateSegmentation();
+function setLoading(loading) {
+  isLoading = loading;
+  if (!loading) {
+    loadingAnimation.addClass('display-none');
+  }
 }
 
 /**

@@ -127,6 +127,9 @@ function handleDetection(err, results) {
     const obj = results[0];
     if (obj && obj.label === 'person') {
         person = obj;
+        if (isLoading) {
+            setLoading(false);
+        }
     }
     detectPerson();
 }

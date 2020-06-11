@@ -1,0 +1,64 @@
+/**
+Loading animation
+based on https://github.com/arnofaure/p5-loading-animation
+*/
+body {
+    width: 640px;
+    height: 480px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+canvas {
+    position: absolute;
+    top: 0;
+    vertical-align: top;
+    z-index: 1;
+}
+.bubbles-wrapper {
+    position: relative;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    z-index: 3;
+}
+.bubbles {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    border-radius: 100%;
+    animation-name: fadein-fadeout;
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(.42, 0, .58, 1);
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+#b1 {
+    background-color: #8861A4;
+}
+#b2 {
+    background-color: #2495C1;
+    animation-delay: 200ms;
+}
+#b3 {
+    background-color: #48BB6D;
+    animation-delay: 300ms;
+}
+#b4 {
+    background-color: #F1C500;
+    animation-delay: 400ms;
+}
+#b5 {
+    background-color: #F35957;
+    animation-delay: 500ms;
+}
+@keyframes fadein-fadeout {
+    0% {opacity: 1; transform: translateY(+25%)}
+    50% {opacity: 0.5; transform: translateY(-25%)}
+    100% {opacity: 1; transform: translateY(+25%)}
+}
+.display-none {
+  display: none;
+}
