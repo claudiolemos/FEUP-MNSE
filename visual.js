@@ -78,7 +78,6 @@ function drawSelectedColor() {
 function getColor(video) {
     const { width, height } = video;
     const x = person.nose.x;
-    console.log(x);
     return spectrumCanvas.color(x, width, height);
 }
 
