@@ -26,8 +26,13 @@ function setup() {
   setupVisual(video);
   // setupSegmentation();
 
-  //poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
-  //poseNet.on('pose', gotPoses);
+  poseNet = ml5.poseNet(video, {
+    architecture: 'MobileNetV1',
+    outputStride: 16,
+    quantBytes: 2,
+    multiplier: 0.5,
+  }, modelLoaded);
+  poseNet.on('pose', gotPoses);
 }
 
 /**
@@ -44,7 +49,7 @@ function draw() {
     // Draw video
     // Update modules
     // updateSound(pose, video);
-    updateVisual(video);
+    updateVisual(video, pose);
     // updateSegmentation();
   }
 }
@@ -78,10 +83,13 @@ function drawVideo(video){
  * @param {Array} poses detected bodies by the poseNet library 
  */
 function gotPoses(poses){
-  if(poses)
+  if (poses.length > 0) {
+    if (!pose) {
+      setLoading(false)
+    }
     pose = poses[0].pose;
+  }
 }
-
 /**
  * 
  */
