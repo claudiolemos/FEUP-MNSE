@@ -1,31 +1,19 @@
-let bodypix;  let segmentation; let img;
-let vid;
-let width = 320;
-let height = 240;
+let bodypix;  
+let segmentation; 
+let img;
+let width = 640;
+let height = 480;
 
 const options = {
-    "outputStride": 8, // 8, 16, or 32, default is 16
-    "segmentationThreshold": 0.3, // 0 - 1, defaults to 0.5 
-	"width" : 320,
-	"height" : 240
-	
+    architecture: 'MobileNetV1',
+    outputStride: 32,
+    inputResolution: { width: 640, height: 480 },
+    multiplier: 0.5,
+    outputStride: 32, // 8, 16, or 32, default is 16
+    segmentationThreshold: 0.3, // 0 - 1, defaults to 0.5 
 }
-function setupSegmentation() {
-    createCanvas(320, 240);
-
-    // load up your video
-    vid = createCapture(VIDEO);
-    vid.size(width, height);
-    // video.hide(); // Hide the video element, and just show the canvas
-
-    bodypix = ml5.bodyPix(vid,	{
-	  architecture: 'MobileNetV1',
-	  outputStride: 16,
-	  inputResolution: { width: 640, height: 480 },
-	  multiplier: 0.75,
-	  width : 320,
-	  height : 240
-	}, modelReady)
+function setupSegmentation(video) {
+    bodypix = ml5.bodyPix(video, options, modelReady)
 }
 function modelReady() {
     console.log('ready!')
@@ -38,11 +26,7 @@ function gotResults(err, result) {
     }
     // console.log(result);
     segmentation = result;
-
     background(0);
-    image(vid, 0, 0, width, height)
-    image(segmentation.maskBackground, 0, 0, width, height)
-
+    image(segmentation.backgroundMask, 0, 0, width, height)
     bodypix.segment(gotResults, options)
-
 }

@@ -11,15 +11,15 @@ let pose;
  * - loads poseNet model
  */
 function setup() {
-	/*
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(640, 480);
 
   video = createCapture(VIDEO);
+  video.size(640, 480);
   video.hide();
-*/
+
   //setupSound();
   // setupVisual();
-  setupSegmentation();
+  setupSegmentation(video);
 
   //poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
   //poseNet.on('pose', gotPoses);
@@ -36,7 +36,7 @@ function draw() {
   //drawVideo(video);
 
   //updateSound(pose, video);
-  // updateVisual();
+  //updateVisual();
   //updateSegmentation(video);
 }
 
