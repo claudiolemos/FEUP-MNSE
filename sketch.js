@@ -17,7 +17,7 @@ var States = {
   SEGMENTATIONINSTRUCTION: 8
 };
 
-let currentState = States.SPLASHSCREEN;
+let currentState = States.SEGMENTATION;
 
 function setup() {
   createCanvas(640, 480);
@@ -31,8 +31,8 @@ function setup() {
   loadingAnimation = select('.bubbles-wrapper');
 
   // setupSound();
-  setupVisual(video);
-  // setupSegmentation();
+  //setupVisual(video);
+  setupSegmentation();
 
   /*poseNet = ml5.poseNet(video, {
     architecture: 'MobileNetV1',
@@ -44,6 +44,7 @@ function setup() {
 }
 
 function draw() {
+	/*
   switch(currentState) {
     case States.SPLASHSCREEN:
       if (frameCount % 60 == 0 && timer > 0) timer --;
@@ -74,17 +75,17 @@ function draw() {
     default:
       // code block
   }
+*/
 
-
-  //drawVideo(video);
-  //image(video, 0, 0);
-  //if (!isLoading) {
-    // Draw video
+  drawVideo(video);
+  image(video, 0, 0);
+  if (!isLoading) {
+	// Draw video
     // Update modules
-    // updateSound(pose, video);
-    //updateVisual(video);
-    // updateSegmentation();
-  //}
+    updateSound(pose, video);
+    updateVisual(video);
+     updateSegmentation();
+  }
 }
 
 function drawSplashScreen(){
