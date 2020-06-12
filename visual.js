@@ -36,6 +36,7 @@ function drawPersonBB(video) {
     // Get person position
     const {x, y, w, h} = person
     // Get colour name
+    const hexColor = rgbToHex(colour);
     const colorName = ntc.name(rgbToHex(colour))[1];
     // Define rect dimensions
     const rectCornerX = x * width;
@@ -43,11 +44,6 @@ function drawPersonBB(video) {
     const rectWidth = w * width;
     const rectHeight = h * height;
     // Draw bounding box
-    noStroke();
-    fill(colour);
-    textSize(20);
-    textAlign(LEFT);
-    text(`${colour.toString()}`, rectCornerX, rectCornerY - 10);
     noFill();
     strokeWeight(4);
     stroke(colour);
@@ -58,6 +54,11 @@ function drawPersonBB(video) {
     textSize(40);
     textAlign(CENTER, CENTER);
     text(colorName, rectCornerX + rectWidth / 2, rectCornerY + rectHeight / 2);
+    fill(colour);
+    textSize(20);
+    strokeWeight(2);
+    stroke(0,0,0);
+    text(hexColor, rectCornerX + rectWidth / 2, rectCornerY + rectHeight / 2 + 30);
 }
 
 /**
@@ -78,6 +79,7 @@ function drawSpectrumCanvas(video) {
 function drawSelectedColor() {
     const { width, height } = spectrumCanvas;
     colour.setAlpha(200);
+    spectrumCanvas.noStroke();
     spectrumCanvas.clear();
     spectrumCanvas.fill(colour);
     spectrumCanvas.rect(0, 0, width, height - 40);

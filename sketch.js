@@ -38,6 +38,7 @@ function setup() {
  * - red circle on the nose of the first detected body
  */
 function draw() {
+  //drawVideo(video);
   image(video, 0, 0);
   if (!isLoading) {
     // Draw video
