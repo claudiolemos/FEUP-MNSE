@@ -1,62 +1,48 @@
-let bodypix;
+let bodypix;  let segmentation; let img;
 let vid;
+let width = 320;
+let height = 240;
 
-function setupSegmentation(video) {
-	vid = video;
-	bodypix = ml5.bodyPix(modelReady);
-}
-
-function updateSegmentation(video) {
+const options = {
+    "outputStride": 8, // 8, 16, or 32, default is 16
+    "segmentationThreshold": 0.3, // 0 - 1, defaults to 0.5 
+	"width" : 320,
+	"height" : 240
 	
 }
+function setupSegmentation() {
+    createCanvas(320, 240);
 
+    // load up your video
+    vid = createCapture(VIDEO);
+    vid.size(width, height);
+    // video.hide(); // Hide the video element, and just show the canvas
+
+    bodypix = ml5.bodyPix(vid,	{
+	  architecture: 'MobileNetV1',
+	  outputStride: 16,
+	  inputResolution: { width: 640, height: 480 },
+	  multiplier: 0.75,
+	  width : 320,
+	  height : 240
+	}, modelReady)
+}
 function modelReady() {
-	console.log("Model loaded!");
-	updateBody();
+    console.log('ready!')
+    bodypix.segment(gotResults, options)
 }
+function gotResults(err, result) {
+    if (err) {
+        console.log(err)
+        return
+    }
+    // console.log(result);
+    segmentation = result;
 
-function updateBody() {
-	// segment the image given
-	bodypix.segment(vid, gotResults);
+    background(0);
+    image(vid, 0, 0, width, height)
+    image(segmentation.maskBackground, 0, 0, width, height)
+
+    bodypix.segment(gotResults, options)
+
 }
-
-function gotResults(error, result) {
-  if (error) {
-    console.log(error);
-    return;
-  }
-  // log the result
-  console.log(result);
-  updateBody();
-}
-
-
-/*
-async function updateSegmentation() {
-	const net = ml5.bodyPix.load();
-
-	function modelReady() {
-	  // segment the image given
-	  bodypix.segment(video, gotResults);
-	}
-
-	const imageElement = document.getElementById('image');
-
-	// arguments for estimating person segmentation.
-	const outputStride = 16;
-	const segmentationThreshold = 0.5;
-
-	const personSegmentation = net.estimatePersonSegmentation(imageElement, outputStride, segmentationThreshold);
-
-	const segmentation = net.estimatePersonSegmentation(imageElement);
-
-	const maskBackground = true;
-	// Convert the personSegmentation into a mask to darken the background.
-	const backgroundDarkeningMask = ml5.bodyPix.toMaskImageData(personSegmentation, maskBackground);const canvas = document.getElementById('canvas');
-
-	const opacity = 0.7;
-	// draw the mask onto the image on a canvas.  With opacity set to 0.7 this will darken the background.
-	bodyPix.drawMask(
-		canvas, imageElement, backgroundDarkeningMask, opacity);
-}
-*/
