@@ -1,7 +1,7 @@
 let video;
 let poseNet;
 let pose;
-
+let context;
 /**
  * Initial setup of the p5js playground
  * 
