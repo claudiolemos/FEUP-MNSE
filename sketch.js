@@ -34,13 +34,13 @@ function setup() {
   setupVisual(video);
   // setupSegmentation();
 
-  /*poseNet = ml5.poseNet(video, {
+  poseNet = ml5.poseNet(video, {
     architecture: 'MobileNetV1',
     outputStride: 16,
     quantBytes: 2,
     multiplier: 0.5,
   }, modelLoaded);
-  poseNet.on('pose', gotPoses);*/
+  poseNet.on('pose', gotPoses);
 }
 
 function draw() {
@@ -82,7 +82,7 @@ function draw() {
     // Draw video
     // Update modules
     // updateSound(pose, video);
-    //updateVisual(video);
+    updateVisual(video, pose);
     // updateSegmentation();
   //}
 }
@@ -125,8 +125,12 @@ function drawVideo(video){
 }
 
 function gotPoses(poses){
-  if(poses)
+  if (poses.length > 0) {
+    if (!pose) {
+      setLoading(false)
+    }
     pose = poses[0].pose;
+  }
 }
 
 function modelLoaded(){

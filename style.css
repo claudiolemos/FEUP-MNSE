@@ -21,6 +21,7 @@ canvas {
     width: 100%;
     text-align: center;
     z-index: 3;
+    pointer-events: none;
 }
 .bubbles {
     position: relative;

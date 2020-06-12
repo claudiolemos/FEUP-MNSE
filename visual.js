@@ -5,21 +5,15 @@ let colour;
 
 function setupVisual(video) {
     const { width, height } = video
-    // Create a YOLO method
-    yolo = ml5.YOLO(video, { 
-        filterBoxesThreshold: 0.01, 
-        IOUThreshold: 0.4, 
-        classProbThreshold: 0.4 
-    }, modelLoaded);
-    // Setup extra canvas for the spectrum
     spectrumCanvas = createGraphics(width, height);
     spectrumCanvas.colorMode(HSB, width);
     colorMode(HSB, width);
     textFont('Helvetica');
 }
 
-function updateVisual(video) {
-    if (!person) return;
+function updateVisual(video, pose) {
+    if (!pose) return;
+    person = pose;
     // Get selected color
     colour = getColor(video);
     // Draw a bounding box on the person
@@ -33,32 +27,19 @@ function updateVisual(video) {
 function drawPersonBB(video) {
     // Get video dimensions
     const { width, height } = video
-    // Get person position
-    const {x, y, w, h} = person
-    // Get colour name
     const hexColor = rgbToHex(colour);
-    const colorName = ntc.name(rgbToHex(colour))[1];
-    // Define rect dimensions
-    const rectCornerX = x * width;
-    const rectCornerY = y * height;
-    const rectWidth = w * width;
-    const rectHeight = h * height;
-    // Draw bounding box
-    noFill();
-    strokeWeight(4);
-    stroke(colour);
-    rect(rectCornerX, rectCornerY, rectWidth, rectHeight);
+    const colorName = ntc.name(hexColor)[1];
     fill(colour);
     strokeWeight(2);
     stroke(0,0,0);
     textSize(40);
     textAlign(CENTER, CENTER);
-    text(colorName, rectCornerX + rectWidth / 2, rectCornerY + rectHeight / 2);
+    text(colorName, width / 2, height / 2);
     fill(colour);
     textSize(20);
     strokeWeight(2);
     stroke(0,0,0);
-    text(hexColor, rectCornerX + rectWidth / 2, rectCornerY + rectHeight / 2 + 30);
+    text(hexColor, width / 2, height / 2 + 30);
 }
 
 /**
@@ -95,12 +76,9 @@ function drawSelectedColor() {
  * @returns Color in RGB color space
  */
 function getColor(video) {
-    const { width, height } = video
-    const { x, w } = person
-    const rectCornerX = x * width;
-    const rectWidth = w * width;
-    const rectCenterX = rectCornerX + rectWidth / 2; 
-    return spectrumCanvas.color(rectCornerX, width, height);
+    const { width, height } = video;
+    const x = person.nose.x;
+    return spectrumCanvas.color(x, width, height);
 }
 
 function rgbToHex(colour) {
@@ -108,29 +86,4 @@ function rgbToHex(colour) {
     if (components.length < 3) return;
     const r = components[0], g = components[1], b = components[2];
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-function modelLoaded() {
-    console.log("Model Loaded!");
-    detectPerson();
-}
-
-function detectPerson() {
-    yolo.detect(handleDetection);
-}
-
-function handleDetection(err, results) {
-    if (err) {
-        console.log(err);
-        return;
-    }
-    // Save person position
-    const obj = results[0];
-    if (obj && obj.label === 'person') {
-        person = obj;
-        if (isLoading) {
-            setLoading(false);
-        }
-    }
-    detectPerson();
 }
