@@ -5,10 +5,9 @@ let height = 480;
 
 const options = {
     architecture: 'MobileNetV1',
-    outputStride: 32,
-    inputResolution: { width: 640, height: 480 },
-    multiplier: 0.5,
-    outputStride: 32, // 8, 16, or 32, default is 16
+    multiplier: 0.75,
+	quantBytes: 2,
+    outputStride: 16, // 8, 16, or 32, default is 16
     segmentationThreshold: 0.3, // 0 - 1, defaults to 0.5 
 }
 
