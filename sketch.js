@@ -20,7 +20,12 @@ function setup() {
   // setupVisual();
   // setupSegmentation();
 
-  poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelLoaded);
+  poseNet = ml5.poseNet(video, {
+    architecture: 'MobileNetV1',
+    outputStride: 16,
+    quantBytes: 2,
+    multiplier: 0.5,
+  }, modelLoaded);
   poseNet.on('pose', gotPoses);
 }
 
