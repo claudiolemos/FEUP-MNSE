@@ -1,11 +1,3 @@
-let video;
-let poseNet;
-let pose;
-let loadingAnimation;
-let isLoading = true;
-let timer = 5
-let images = [];
-
 var States = {
   SPLASHSCREEN: 1,
   HOMESCREEN: 2,
@@ -13,26 +5,31 @@ var States = {
   VISUAL: 4,
   SEGMENTATION: 5,
   SOUNDINSTRUCTION: 6,
-  VISUAINSTRUCTIONL: 7,
+  VISUALINSTRUCTION: 7,
   SEGMENTATIONINSTRUCTION: 8
 };
 
+let video;
+let poseNet;
+let pose;
+let loadingAnimation;
+let isLoading = true;
+let timer = 3
+let images = [];
 let currentState = States.SPLASHSCREEN;
+let oldPose = 0;
+let poseCounter = 0;
 
 function setup() {
-  createCanvas(640, 480);
-  loadImages();
-
   video = createCapture(VIDEO);
-  video.size(640,480);
   video.hide();
 
-  // Loading animation
-  loadingAnimation = select('.bubbles-wrapper');
+  loadImages();
+  loadingAnimation = select('.bubbles-wrapper'); // load animation
 
-  // setupSound();
+  setupSound();
   setupVisual(video);
-  // setupSegmentation();
+  setupSegmentation();
 
   poseNet = ml5.poseNet(video, {
     architecture: 'MobileNetV1',
@@ -41,54 +38,129 @@ function setup() {
     multiplier: 0.5,
   }, modelLoaded);
   poseNet.on('pose', gotPoses);
+
+  createCanvas(640, 480);
+  imageMode(CENTER);
 }
 
 function draw() {
   switch(currentState) {
     case States.SPLASHSCREEN:
-      if (frameCount % 60 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 5; currentState = States.HOMESCREEN}
+      if (frameCount % 30 == 0 && timer > 0) timer --;
+      if (timer == 0) {timer = 3; currentState = States.HOMESCREEN}
       drawSplashScreen();
       break;
     case States.HOMESCREEN:
-      image(video, 0, 0);
+      drawHomeScreen();
+      checkPosition();
       break;
     case States.SOUND:
-      
+      image(video, width/2, height/2);
+      updateSound(pose, video);
       break;
     case States.VISUAL:
-      
+      updateVisual(video, pose);
       break;
     case States.SEGMENTATION:
-      
+      updateSegmentation();
       break;
     case States.SOUNDINSTRUCTION:
-      
+      if (frameCount % 30 == 0 && timer > 0) timer --;
+      if (timer == 0) {timer = 3; currentState = States.SOUND; audioOn();}
+      drawSoundInstruction();
       break;
     case States.VISUALINSTRUCTION:
-      
+      if (frameCount % 30 == 0 && timer > 0) timer --;
+      if (timer == 0) {timer = 3; currentState = States.VISUAL}
+      drawVisualInstruction();
       break;
     case States.SEGMENTATIONINSTRUCTION:
-      
+      if (frameCount % 30 == 0 && timer > 0) timer --;
+      if (timer == 0) {timer = 3; currentState = States.SEGMENTATION}
+      drawSegmentationInstruction();
       break;
     default:
-      // code block
+      break;
   }
+}
 
+function checkPosition(){
+  if(pose){
+    if(oldPose == 0)
+      oldPose = pose.nose.x
+    else if(abs(oldPose - pose.nose.x) <= 10) // pixel threshold
+      poseCounter++;
+    else
+      poseCounter = 0;
 
-  //drawVideo(video);
-  //image(video, 0, 0);
-  //if (!isLoading) {
-    // Draw video
-    // Update modules
-    // updateSound(pose, video);
-    updateVisual(video, pose);
-    // updateSegmentation();
-  //}
+    oldPose = pose.nose.x;
+
+    if(poseCounter == 30*2){ // 2 seconds static
+      let choice = oldPose/width;
+      if(choice <= 1/3) currentState = States.VISUALINSTRUCTION;
+      else if(choice <= 2/3) currentState = States.SOUNDINSTRUCTION;
+      else currentState = States.SEGMENTATIONINSTRUCTION;
+    }
+  }
 }
 
 function drawSplashScreen(){
-  image(images.humansynth, 0, 0);
+  background(0);
+  image(images.humansynth, width/2, height/2, images.humansynth.width*0.5, images.humansynth.height*0.5);
+  image(images.slogan, width/2, height/2+height*0.1, images.slogan.width*0.5, images.slogan.height*0.5);
+  image(images.credits, width/2, height/2+height*0.4, images.credits.width*0.5, images.credits.height*0.5);
+}
+
+function drawHomeScreen(){
+  background(0);
+  tint(255, 75);
+  image(video, width/2, height/2);
+  tint(255, 255)
+  blendMode(ADD);
+  image(images.humansynth, width/2, height/2-height*0.3, images.humansynth.width*0.5, images.humansynth.height*0.5);
+  image(images.visual_logo, width/6, height/2+height*0.1, images.visual_logo.width*0.45, images.visual_logo.height*0.45);
+  image(images.visual_typo, width/6, height/2+height*0.35, images.visual_typo.width*0.4, images.visual_typo.height*0.4);
+  image(images.sound_logo, 3*width/6, height/2+height*0.1, images.sound_logo.width*0.45, images.sound_logo.height*0.45);
+  image(images.sound_typo, 3*width/6, height/2+height*0.35, images.sound_typo.width*0.4, images.sound_typo.height*0.4);
+  image(images.segmentation_logo, 5*width/6, height/2+height*0.1, images.segmentation_logo.width*0.45, images.segmentation_logo.height*0.45);
+  image(images.segmentation_typo, 5*width/6, height/2+height*0.35, images.segmentation_typo.width*0.4, images.segmentation_typo.height*0.4);
+  blendMode(BLEND);
+}
+
+function drawSoundInstruction(){
+  background(0);
+  tint(255, 75);
+  image(video, width/2, height/2);
+  tint(255, 255)
+  blendMode(ADD);
+  image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
+  image(images.sound_logo, width/2, height/2, images.sound_logo.width*0.65, images.sound_logo.height*0.65);
+  image(images.sound_instructions, width/2, height/2+height*0.35, images.sound_instructions.width*0.5, images.sound_instructions.height*0.5);
+  blendMode(BLEND);
+}
+
+function drawVisualInstruction(){
+  background(0);
+  tint(255, 75);
+  image(video, width/2, height/2);
+  tint(255, 255)
+  blendMode(ADD);
+  image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
+  image(images.visual_logo, width/2, height/2, images.visual_logo.width*0.65, images.visual_logo.height*0.65);
+  image(images.visual_instructions, width/2, height/2+height*0.35, images.visual_instructions.width*0.5, images.visual_instructions.height*0.5);
+  blendMode(BLEND);
+}
+
+function drawSegmentationInstruction(){
+  blendMode(BLEND);
+  background(0);
+  tint(255, 75);
+  image(video, width/2, height/2);
+  tint(255, 255)
+  blendMode(ADD);
+  image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
+  image(images.segmentation_logo, width/2, height/2, images.segmentation_logo.width*0.65, images.segmentation_logo.height*0.65);
+  image(images.segmentation_instructions, width/2, height/2+height*0.35, images.segmentation_instructions.width*0.5, images.segmentation_instructions.height*0.5);
 }
 
 function loadImages(){
@@ -113,21 +185,10 @@ function setLoading(loading) {
   }
 }
 
-function drawVideo(video){
-  if(video.width*(windowWidth/video.width) >= windowWidth && video.height*(windowWidth/video.width) >= windowHeight){ // LANDSCAPE
-    image(video, (windowWidth-video.width*(windowWidth/video.width))/2, (windowHeight-video.height*(windowWidth/video.width))/2, video.width*(windowWidth/video.width), video.height*(windowWidth/video.width));
-    // return windowWidth/video.width;
-  }
-  else{ // PORTRAIT
-    image(video, (windowWidth-video.width*(windowHeight/video.height))/2, (windowHeight-video.height*(windowHeight/video.height))/2, video.width*(windowHeight/video.height), video.height*(windowHeight/video.height));
-    // return windowHeight/video.height;
-  }
-}
-
 function gotPoses(poses){
   if (poses.length > 0) {
     if (!pose) {
-      setLoading(false)
+      // setLoading(false)
     }
     pose = poses[0].pose;
   }
