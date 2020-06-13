@@ -46,7 +46,7 @@ function draw() {
 
   switch(currentState) {
     case States.SPLASHSCREEN:
-      if (frameCount % 60 == 0 && timer > 0) timer --;
+      if (frameCount % 30 == 0 && timer > 0) timer --;
       if (timer == 0) {timer = 5; currentState = States.HOMESCREEN}
       drawSplashScreen();
       break;
@@ -72,7 +72,7 @@ function draw() {
       if(isDrawingExitBar) drawExitBar();
       break;
     case States.SOUNDINSTRUCTION:
-      if (frameCount % 60 == 0 && timer > 0) timer --;
+      if (frameCount % 30 == 0 && timer > 0) timer --;
       if (timer == 0) {
         timer = 5; 
         currentState = States.SOUND;
@@ -82,7 +82,7 @@ function draw() {
       drawSoundInstruction();
       break;
     case States.VISUALINSTRUCTION:
-      if (frameCount % 60 == 0 && timer > 0) timer --;
+      if (frameCount % 30 == 0 && timer > 0) timer --;
       if (timer == 0) {
         timer = 5; 
         currentState = States.VISUAL
@@ -91,7 +91,7 @@ function draw() {
       drawVisualInstruction();
       break;
     case States.ARTSTYLEINSTRUCTION:
-      if (frameCount % 60 == 0 && timer > 0) timer --;
+      if (frameCount % 30 == 0 && timer > 0) timer --;
       if (timer == 0) {
         timer = 5; 
         currentState = States.ARTSTYLE;
@@ -121,7 +121,7 @@ function checkPosition(){
 
     if(poseCounter > 60*2) isDrawingExitBar = true; // 2 seconds static starts countdown
 
-    if(poseCounter == 60*5 && currentState == States.HOMESCREEN) { // 5 seconds static
+    if(poseCounter == 60*4 && currentState == States.HOMESCREEN) { // 5 seconds static
       let choice = oldPose/width;
       if(choice <= 1/3) currentState = States.VISUALINSTRUCTION;
       else if(choice <= 2/3) currentState = States.SOUNDINSTRUCTION;
@@ -143,7 +143,7 @@ function drawExitBar(){
   noStroke();
   fill(255);
   if(currentState == States.HOMESCREEN)
-    square(width*0.025, height*0.95, (width*0.95)*((poseCounter-(60*2))/(60*3)), height*0.015);
+    square(width*0.025, height*0.95, (width*0.95)*((poseCounter-(60*2))/(60*2)), height*0.015);
   else
     square(width*0.025, height*0.95, (width*0.95)*(1-((poseCounter-(60*2))/(60*8))), height*0.015);
 
