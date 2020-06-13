@@ -1,3 +1,4 @@
+let imagesWidth;
 let imageIndex = 0;
 let soundClassifier;
 let soundCmd;
@@ -9,7 +10,7 @@ const soundOptions = { probabilityThreshold: 0.4 };
 let modelNets = [];
 let isModelLoaded = [];
 const modelNames = [
-	'la_muse', 
+	'la_muse',
 	'rain_princess', 
 	'udnie', 
 	'wreck', 
@@ -19,17 +20,24 @@ const modelNames = [
 	'fuchun', 
 	'zhangdaqian'
 ];
+let modelImages = [];
 
 function setupSegmentation(video) {
+	const { width, height } = video;
+
 	setLoading(true);
 
+	// Load images
+	modelImages = modelNames.map(model => loadImage(`images/${model}.jpg`));
+	imagesWidth = width / 9;
+ 
 	// Voice command classifier
 	soundClassifier = ml5.soundClassifier(
 		'SpeechCommands18w', 
 		soundOptions, 
 		soundModelReady
 	);
-	
+
 	// Load model nets
 	modelNets = modelNames.map(model =>
 		ml5.styleTransfer(
@@ -61,6 +69,7 @@ function updateSegmentation(video) {
 	// Draw video / result image
 	if (hasOutputImg) {
 		image(resultImg, 0, 0, width, height + 100);
+		drawImagesCanvas();
 	} else {
 		drawLoadingScreen(video);
 	}
@@ -76,13 +85,33 @@ function drawLoadingScreen(video) {
 	text("Loading models...", width / 2, height / 2 + 100);
 }
 
+function drawImagesCanvas() {
+	var c = color(0,0,0);
+	for (i = 0; i < modelImages.length; i++) {
+		const imgX = i * imagesWidth;
+		const imgY = height - imagesWidth;
+		if (i === imageIndex) {
+			c.setAlpha(0);
+		} else {
+			c.setAlpha(126);
+		}
+		// Draw image
+		image(modelImages[i], imgX, imgY, imagesWidth, imagesWidth);
+		// Draw bounding image border
+		fill(c);
+		strokeWeight(2);
+		stroke(0);
+		rect(imgX, imgY, imagesWidth, imagesWidth);
+	}
+}
+
 function soundModelReady() {
 	console.log("Sound classifier model loaded!");
 	detectSound();
 }
 
 function detectSound() {
-	if (isLoading) {
+	if (!isLoading) {
 		soundClassifier.classify(processSound);
 	}
 }
@@ -94,10 +123,9 @@ function processSound(error, result) {
 	  return;
 	}
 	// Print the command
-	if (!result.length || isLoading) return;
+	if (!result.length) return;
 	const cmd = result[0].label;
 	if (allowed.includes(cmd)) {
-		console.log(cmd);
 		updateImageIndex(cmd);
 		styleFrame();
 	}
