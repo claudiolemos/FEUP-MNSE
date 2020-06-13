@@ -57,12 +57,19 @@ function updateSound(pose, video) {
 
     // adds text with waveform info
     strokeWeight(1);
-    text('Modulator Frequency: ' + modulationFreq.toFixed(3) + ' Hz', 20, 20);
-    text('Modulator Amplitude (Modulation Depth): ' + modulationAmp.toFixed(3), 20, 40);
-    text('Carrier Frequency (pre-modulation): ' + carrierFreq + ' Hz', width / 2, 20);
+    fill(50);
+    textSize(15);
+    noStroke();
+    text('mod frequency: ' + parseInt(modulationFreq) + ' Hz' + '\n'
+       + 'mod amplitude: ' + parseInt(modulationAmp) + '\n'
+       + 'carrier frequency: ' + parseInt(carrierFreq) + ' Hz', 20, 20);
   }
 }
 
 function audioOn(){
   carrier.amp(1.0, 0.01);
+}
+
+function audioOff(){
+  carrier.amp(0.0, 1.0);
 }

@@ -14,11 +14,12 @@ let poseNet;
 let pose;
 let loadingAnimation;
 let isLoading = true;
-let timer = 3
+let timer = 5
 let images = [];
 let currentState = States.SPLASHSCREEN;
 let oldPose = 0;
 let poseCounter = 0;
+let isDrawingExitBar = false;
 
 function setup() {
   video = createCapture(VIDEO);
@@ -47,36 +48,43 @@ function draw() {
   switch(currentState) {
     case States.SPLASHSCREEN:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 3; currentState = States.HOMESCREEN}
+      if (timer == 0) {timer = 5; currentState = States.HOMESCREEN}
       drawSplashScreen();
       break;
     case States.HOMESCREEN:
       drawHomeScreen();
       checkPosition();
+      if(isDrawingExitBar) drawExitBar();
       break;
     case States.SOUND:
       image(video, width/2, height/2);
       updateSound(pose, video);
+      checkPosition();
+      if(isDrawingExitBar) drawExitBar();
       break;
     case States.VISUAL:
       updateVisual(video, pose);
+      checkPosition();
+      if(isDrawingExitBar) drawExitBar();
       break;
     case States.SEGMENTATION:
       updateSegmentation();
+      checkPosition();
+      if(isDrawingExitBar) drawExitBar();
       break;
     case States.SOUNDINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 3; currentState = States.SOUND; audioOn();}
+      if (timer == 0) {timer = 5; currentState = States.SOUND; audioOn();}
       drawSoundInstruction();
       break;
     case States.VISUALINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 3; currentState = States.VISUAL}
+      if (timer == 0) {timer = 5; currentState = States.VISUAL}
       drawVisualInstruction();
       break;
     case States.SEGMENTATIONINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 3; currentState = States.SEGMENTATION}
+      if (timer == 0) {timer = 5; currentState = States.SEGMENTATION}
       drawSegmentationInstruction();
       break;
     default:
@@ -88,20 +96,45 @@ function checkPosition(){
   if(pose){
     if(oldPose == 0)
       oldPose = pose.nose.x
-    else if(abs(oldPose - pose.nose.x) <= 10) // pixel threshold
+    else if(abs(oldPose - pose.nose.x) <= 10){ // pixel threshold
       poseCounter++;
-    else
+      isDrawingExitBar = false;
+    }
+    else{
       poseCounter = 0;
+      isDrawingExitBar = false;
+    }
 
     oldPose = pose.nose.x;
 
-    if(poseCounter == 30*2){ // 2 seconds static
+    if(poseCounter > 30*2) isDrawingExitBar = true; // 2 seconds static starts countdown
+
+    if(poseCounter == 30*5 && currentState == States.HOMESCREEN){ // 5 seconds static
       let choice = oldPose/width;
       if(choice <= 1/3) currentState = States.VISUALINSTRUCTION;
       else if(choice <= 2/3) currentState = States.SOUNDINSTRUCTION;
       else currentState = States.SEGMENTATIONINSTRUCTION;
+      poseCounter = 0;
+      isDrawingExitBar = false;
+    }
+
+    if(poseCounter == 30*5 && (currentState == States.VISUAL || currentState == States.SOUND || currentState == States.SEGMENTATION)){
+      if(currentState == States.SOUND) audioOff();
+      currentState = States.HOMESCREEN;
+      poseCounter = 0;
+      isDrawingExitBar = false;
     }
   }
+}
+
+function drawExitBar(){
+  noStroke();
+  fill(255);
+  if(currentState == States.HOMESCREEN)
+    square(width*0.025, height*0.95, (width*0.95)*((poseCounter-(30*2))/(30*3)), height*0.015);
+  else
+    square(width*0.025, height*0.95, (width*0.95)*(1-((poseCounter-(30*2))/(30*3))), height*0.015);
+
 }
 
 function drawSplashScreen(){
