@@ -2,7 +2,7 @@ let video;
 let poseNet;
 let pose;
 let loadingAnimation;
-let isLoading = true;
+let isLoading = false;
 let timer = 5
 let images = [];
 
@@ -20,7 +20,7 @@ var States = {
 let currentState = States.SEGMENTATION;
 
 function setup() {
-  createCanvas(640, 480);
+  createCanvas(1280, 960);
   loadImages();
 
   video = createCapture(VIDEO);
@@ -32,7 +32,7 @@ function setup() {
 
   // setupSound();
   //setupVisual(video);
-  setupSegmentation();
+  setupSegmentation(video);
 
   /*poseNet = ml5.poseNet(video, {
     architecture: 'MobileNetV1',
@@ -77,14 +77,14 @@ function draw() {
   }
 */
 
-  drawVideo(video);
+  //drawVideo(video);
   image(video, 0, 0);
   if (!isLoading) {
-	// Draw video
+	  // Draw video
     // Update modules
-    updateSound(pose, video);
-    updateVisual(video);
-     updateSegmentation();
+    //updateSound(pose, video);
+    //updateVisual(video);
+    updateSegmentation();
   }
 }
 
