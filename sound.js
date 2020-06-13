@@ -56,13 +56,13 @@ function updateSound(video, pose) {
     endShape();
 
     // adds text with waveform info
-    strokeWeight(1);
     fill(50);
     textSize(15);
     noStroke();
+    imageMode(CORNER);
     text('mod frequency: ' + parseInt(modulationFreq) + ' Hz' + '\n'
        + 'mod amplitude: ' + parseInt(modulationAmp) + '\n'
-       + 'carrier frequency: ' + parseInt(carrierFreq) + ' Hz', 20, 20);
+       + 'carrier frequency: ' + parseInt(carrierFreq) + ' Hz', 30, 30);
   }
 }
 
