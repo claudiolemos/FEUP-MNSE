@@ -22,7 +22,7 @@ const modelNames = [
 ];
 let modelImages = [];
 
-function setupSegmentation(video) {
+function setupArtStyle(video) {
 	const { width } = video;
 
 	setLoading(true);
@@ -56,7 +56,7 @@ function modelsLoaded() {
 	return isModelLoaded.length === modelNames.length;
 }
 
-function updateSegmentation(video) {
+function updateArtStyle(video) {
 	const { width, height } = video;
 	// Verify if loading is complete
 	if (modelsLoaded()) {
