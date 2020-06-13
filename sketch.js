@@ -21,8 +21,10 @@ let oldPose = 0;
 let poseCounter = 0;
 let isDrawingExitBar = false;
 
-function setup() {
+function setup() {  
+  createCanvas(640, 480);
   video = createCapture(VIDEO);
+  video.size(640,480);
   video.hide();
 
   loadImages();
@@ -40,7 +42,6 @@ function setup() {
   }, modelLoaded);
   poseNet.on('pose', gotPoses);
 
-  createCanvas(640, 480);
   imageMode(CENTER);
 }
 
