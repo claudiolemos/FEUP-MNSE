@@ -29,7 +29,7 @@ function setupSound() {
   carrier.amp(0.0, 1.0);
 }
 
-function updateSound(pose, video) {
+function updateSound(video, pose) {
   if(pose){
   carrier.amp(1.0, 0.01);
 

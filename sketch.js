@@ -30,10 +30,6 @@ function setup() {
   loadImages();
   loadingAnimation = select('.bubbles-wrapper'); // load animation
 
-  setupSound();
-  setupVisual(video);
-  setupSegmentation();
-
   poseNet = ml5.poseNet(video, {
     architecture: 'MobileNetV1',
     outputStride: 16,
@@ -57,7 +53,7 @@ function draw() {
       break;
     case States.SOUND:
       image(video, width/2, height/2);
-      updateSound(pose, video);
+      updateSound(video, pose);
       checkPosition();
       if(isDrawingExitBar) drawExitBar();
       break;
@@ -67,23 +63,36 @@ function draw() {
       if(isDrawingExitBar) drawExitBar();
       break;
     case States.SEGMENTATION:
-      updateSegmentation();
+      updateSegmentation(video);
       checkPosition();
       if(isDrawingExitBar) drawExitBar();
       break;
     case States.SOUNDINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 5; currentState = States.SOUND; audioOn();}
+      if (timer == 0) {
+        timer = 5; 
+        currentState = States.SOUND;
+        setupSound();
+        audioOn();
+      }
       drawSoundInstruction();
       break;
     case States.VISUALINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 5; currentState = States.VISUAL}
+      if (timer == 0) {
+        timer = 5; 
+        currentState = States.VISUAL
+        setupVisual(video);
+      }
       drawVisualInstruction();
       break;
     case States.SEGMENTATIONINSTRUCTION:
       if (frameCount % 30 == 0 && timer > 0) timer --;
-      if (timer == 0) {timer = 5; currentState = States.SEGMENTATION}
+      if (timer == 0) {
+        timer = 5; 
+        currentState = States.SEGMENTATION;
+        setupSegmentation(video);
+      }
       drawSegmentationInstruction();
       break;
     default:
@@ -209,21 +218,21 @@ function loadImages(){
 
 function setLoading(loading) {
   isLoading = loading;
-  if (!loading) {
+  if (loading) {
+    loadingAnimation.removeClass('display-none');
+  } else {
     loadingAnimation.addClass('display-none');
   }
 }
 
 function gotPoses(poses){
   if (poses.length > 0) {
-    if (!pose) {
-      // setLoading(false)
-    }
     pose = poses[0].pose;
   }
 }
 
-function modelLoaded(){
+function modelLoaded() {
+  console.log('PoseNet model loaded!');
 }
 
 function transparentLayer() {
