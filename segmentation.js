@@ -23,7 +23,7 @@ const modelNames = [
 let modelImages = [];
 
 function setupSegmentation(video) {
-	const { width, height } = video;
+	const { width } = video;
 
 	setLoading(true);
 
@@ -111,24 +111,24 @@ function soundModelReady() {
 }
 
 function detectSound() {
-	if (!isLoading) {
-		soundClassifier.classify(processSound);
-	}
+	soundClassifier.classify(processSound);
 }
 
 function processSound(error, result) {
-	const allowed = ['left', 'right'];
 	if (error) {
 	  console.log(error);
 	  return;
 	}
+	// Get best confidence voice command
+	const allowed = result.filter(r => r.label === 'left' || r.label === 'right');
+	const bestConfidence = Math.max(...allowed.map(p => p.confidence));
+	const bestParam = allowed.filter(p => p.confidence === bestConfidence)[0];
+	if (bestParam.confidence < 0.1) return;
+	const cmd = bestParam.label;
 	// Print the command
 	if (!result.length) return;
-	const cmd = result[0].label;
-	if (allowed.includes(cmd)) {
-		updateImageIndex(cmd);
-		styleFrame();
-	}
+	updateImageIndex(cmd);
+	styleFrame();
 }
 
 function styleModelLoaded(model) {
@@ -150,7 +150,11 @@ function updateImageIndex(cmd) {
 }
 
 function styleFrame() {
-	modelNets[imageIndex].transfer(gotResult);
+	try {
+		modelNets[imageIndex].transfer(gotResult);
+	} catch(error) {
+		console.log(error);
+	}
 }
 
 function gotResult(err, res) {
@@ -160,6 +164,4 @@ function gotResult(err, res) {
 	}
 	resultImg.attribute('src', res.src);
 	hasOutputImg = true;
-	// Comment this line to disable real-time styling
-	modelNets[imageIndex].transfer(gotResult);
 }
