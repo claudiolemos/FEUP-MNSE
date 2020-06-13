@@ -12,9 +12,8 @@ function setupVisual(video) {
 }
 
 function updateVisual(video, pose) {
-	//blendMode(BLEND);
-	imageMode(CORNER);
     if (!pose) return;
+	imageMode(CORNER);
 	image(video, 0,0);
     person = pose;
     // Get selected color

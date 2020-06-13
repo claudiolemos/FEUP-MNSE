@@ -41,8 +41,6 @@ function setup() {
     multiplier: 0.5,
   }, modelLoaded);
   poseNet.on('pose', gotPoses);
-
-  imageMode(CENTER);
 }
 
 function draw() {
@@ -97,7 +95,7 @@ function checkPosition(){
   if(pose){
     if(oldPose == 0)
       oldPose = pose.nose.x
-    else if(abs(oldPose - pose.nose.x) <= 10){ // pixel threshold
+    else if(abs(oldPose - pose.nose.x) <= 50){ // pixel threshold
       poseCounter++;
       isDrawingExitBar = false;
     }
@@ -110,7 +108,7 @@ function checkPosition(){
 
     if(poseCounter > 30*2) isDrawingExitBar = true; // 2 seconds static starts countdown
 
-    if(poseCounter == 30*5 && currentState == States.HOMESCREEN){ // 5 seconds static
+    if(poseCounter == 30*5 && currentState == States.HOMESCREEN) { // 5 seconds static
       let choice = oldPose/width;
       if(choice <= 1/3) currentState = States.VISUALINSTRUCTION;
       else if(choice <= 2/3) currentState = States.SOUNDINSTRUCTION;
@@ -140,16 +138,16 @@ function drawExitBar(){
 
 function drawSplashScreen(){
   background(0);
+  imageMode(CENTER);
   image(images.humansynth, width/2, height/2, images.humansynth.width*0.5, images.humansynth.height*0.5);
   image(images.slogan, width/2, height/2+height*0.1, images.slogan.width*0.5, images.slogan.height*0.5);
   image(images.credits, width/2, height/2+height*0.4, images.credits.width*0.5, images.credits.height*0.5);
 }
 
-function drawHomeScreen(){
-  background(0);
-  tint(255, 75);
+function drawHomeScreen() {
+  imageMode(CENTER);
   image(video, width/2, height/2);
-  tint(255, 255)
+  transparentLayer();
   blendMode(ADD);
   image(images.humansynth, width/2, height/2-height*0.3, images.humansynth.width*0.5, images.humansynth.height*0.5);
   image(images.visual_logo, width/6, height/2+height*0.1, images.visual_logo.width*0.45, images.visual_logo.height*0.45);
@@ -163,9 +161,8 @@ function drawHomeScreen(){
 
 function drawSoundInstruction(){
   background(0);
-  tint(255, 75);
   image(video, width/2, height/2);
-  tint(255, 255)
+  transparentLayer();
   blendMode(ADD);
   image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
   image(images.sound_logo, width/2, height/2, images.sound_logo.width*0.65, images.sound_logo.height*0.65);
@@ -173,11 +170,10 @@ function drawSoundInstruction(){
   blendMode(BLEND);
 }
 
-function drawVisualInstruction(){
+function drawVisualInstruction() {
   background(0);
-  tint(255, 75);
   image(video, width/2, height/2);
-  tint(255, 255)
+  transparentLayer();
   blendMode(ADD);
   image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
   image(images.visual_logo, width/2, height/2, images.visual_logo.width*0.65, images.visual_logo.height*0.65);
@@ -186,15 +182,14 @@ function drawVisualInstruction(){
 }
 
 function drawSegmentationInstruction(){
-  blendMode(BLEND);
   background(0);
-  tint(255, 75);
   image(video, width/2, height/2);
-  tint(255, 255)
+  transparentLayer();
   blendMode(ADD);
   image(images.humansynth, width/2, height/2-height*0.45, images.humansynth.width*0.1, images.humansynth.height*0.1);
   image(images.segmentation_logo, width/2, height/2, images.segmentation_logo.width*0.65, images.segmentation_logo.height*0.65);
   image(images.segmentation_instructions, width/2, height/2+height*0.35, images.segmentation_instructions.width*0.5, images.segmentation_instructions.height*0.5);
+  blendMode(BLEND);
 }
 
 function loadImages(){
@@ -229,4 +224,10 @@ function gotPoses(poses){
 }
 
 function modelLoaded(){
+}
+
+function transparentLayer() {
+  fill('rgba(0,0,0,0.5)');
+  rect(0,0,width,height);
+  noFill();
 }
