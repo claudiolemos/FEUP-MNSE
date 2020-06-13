@@ -2,10 +2,12 @@ let imageIndex = 0;
 let soundClassifier;
 let soundCmd;
 let resultImg;
+let hasOutputImg = false;
 
 const soundOptions = { probabilityThreshold: 0.4 };
 
 let modelNets = [];
+let isModelLoaded = [];
 const modelNames = [
 	'la_muse', 
 	'rain_princess', 
@@ -19,6 +21,8 @@ const modelNames = [
 ];
 
 function setupSegmentation(video) {
+	setLoading(true);
+
 	// Voice command classifier
 	soundClassifier = ml5.soundClassifier(
 		'SpeechCommands18w', 
@@ -40,8 +44,36 @@ function setupSegmentation(video) {
 	resultImg.hide();
 }
 
-function updateSegmentation() {
-	image(resultImg, 640, 0, 640, 480);
+function modelsLoaded() {
+	return isModelLoaded.length === modelNames.length;
+}
+
+function updateSegmentation(video) {
+	const { width, height } = video;
+	// Verify if loading is complete
+	if (modelsLoaded()) {
+		// Init first frame
+		if (isLoading) {
+			styleFrame();
+		}
+		setLoading(false);
+	}
+	// Draw video / result image
+	if (hasOutputImg) {
+		image(resultImg, 0, 0, width, height + 100);
+	} else {
+		drawLoadingScreen(video);
+	}
+}
+
+function drawLoadingScreen(video) {
+	const { width, height } = video;
+	image(video, 0, 0, width, height);
+	fill(255,255,255);
+	stroke(0,0,0);
+	textSize(20);
+	textAlign(CENTER, CENTER);
+	text("Loading models...", width / 2, height / 2 + 100);
 }
 
 function soundModelReady() {
@@ -50,7 +82,9 @@ function soundModelReady() {
 }
 
 function detectSound() {
-	soundClassifier.classify(processSound);
+	if (isLoading) {
+		soundClassifier.classify(processSound);
+	}
 }
 
 function processSound(error, result) {
@@ -60,10 +94,10 @@ function processSound(error, result) {
 	  return;
 	}
 	// Print the command
-	if (!result.length) return;
-	const cmd = result[0].label; 
+	if (!result.length || isLoading) return;
+	const cmd = result[0].label;
 	if (allowed.includes(cmd)) {
-		console.log(cmd)
+		console.log(cmd);
 		updateImageIndex(cmd);
 		styleFrame();
 	}
@@ -71,6 +105,7 @@ function processSound(error, result) {
 
 function styleModelLoaded(model) {
 	console.log(`Style model ${model} loaded!`);
+	isModelLoaded.push(true);
 }
 
 function updateImageIndex(cmd) {
@@ -87,7 +122,6 @@ function updateImageIndex(cmd) {
 }
 
 function styleFrame() {
-	console.log('Style Transfer model Loaded!');
 	modelNets[imageIndex].transfer(gotResult);
 }
 
@@ -97,5 +131,7 @@ function gotResult(err, res) {
 		return;
 	}
 	resultImg.attribute('src', res.src);
-	//modelNets[imageIndex].transfer(gotResult);
+	hasOutputImg = true;
+	// Comment this line to disable real-time styling
+	modelNets[imageIndex].transfer(gotResult);
 }

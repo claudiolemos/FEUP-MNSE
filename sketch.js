@@ -2,7 +2,7 @@ let video;
 let poseNet;
 let pose;
 let loadingAnimation;
-let isLoading = false;
+let isLoading = true;
 let timer = 5
 let images = [];
 
@@ -20,7 +20,7 @@ var States = {
 let currentState = States.SEGMENTATION;
 
 function setup() {
-  createCanvas(1280, 960);
+  createCanvas(640,480);
   loadImages();
 
   video = createCapture(VIDEO);
@@ -77,15 +77,13 @@ function draw() {
   }
 */
 
-  //drawVideo(video);
-  image(video, 0, 0);
-  if (!isLoading) {
-	  // Draw video
-    // Update modules
-    //updateSound(pose, video);
-    //updateVisual(video);
-    updateSegmentation();
-  }
+  // Draw video
+  //image(video, 0, 0);
+
+  // Update modules
+  //updateSound(pose, video);
+  //updateVisual(video);
+  updateSegmentation(video);
 }
 
 function drawSplashScreen(){
@@ -109,7 +107,9 @@ function loadImages(){
 
 function setLoading(loading) {
   isLoading = loading;
-  if (!loading) {
+  if (loading) {
+    loadingAnimation.removeClass('display-none');
+  } else {
     loadingAnimation.addClass('display-none');
   }
 }
